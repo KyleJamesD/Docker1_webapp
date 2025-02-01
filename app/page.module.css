@@ -12,3 +12,7 @@
   font-size: large;
   font-weight: bold;
 }
+
+.submitButton:hover {
+background-color: green;
+}
