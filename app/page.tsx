@@ -11,8 +11,8 @@ import { DataItem } from "./api/utility/schema";
 export default function Home() {
 
 
-  function handleSubmit () {
-
+  function handleSubmit (event:any) {
+    event.preventDefault(); 
     const  newStudent : DataItem = {
       student_id : studentId,
       fullname : fullName,
@@ -30,6 +30,7 @@ const [date, setDate] = useState('');
 const [data, setData] = useState<DataItem[]>([]);
 
 const addStudent = async (student: { student_id: string; fullname: string; coursename: string; date:string;  }) => {
+  
   try {
     const res = await fetch('/api/route', {
       method: 'POST',
@@ -75,31 +76,31 @@ const fetchData = async () => {
   return (
     <div className={styles.page}>
       <h1>Add New Student</h1>
-      <form onSubmit={handleSubmit} className={styles.page}>
+      <form onSubmit={handleSubmit} method="POST" className={styles.page}>
         <label>
         <input type="text" 
-        name="username" 
+        name="student_id" 
         placeholder="Student ID"
         value={studentId} 
         onChange={(event) =>(setStudentId(event.target.value))}></input>
         </label>
         <label>
         <input type="text" 
-        name="username" 
+        name="fullname" 
         placeholder="Full Name"
         value={fullName} 
         onChange={(event) =>(setFullName(event.target.value))}></input>
         </label>
         <label>
         <input type="text" 
-        name="username" 
+        name="coursename" 
         placeholder="Couse Name"
         value={courseName} 
         onChange={(event) =>(setCourseName(event.target.value))}></input>
         </label>
         <label>
         <input type="text" 
-        name="username" 
+        name="date" 
         placeholder="Date (dd/mm/yyyy)"
         value={date} 
         onChange={(event) =>(setDate(event.target.value))}></input>
