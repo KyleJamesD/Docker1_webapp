@@ -1,5 +1,4 @@
 .page {
-  border: 2px red solid;
   display: flex;
   flex-direction: column;
 }
@@ -13,6 +12,18 @@
   font-weight: bold;
 }
 
-.submitButton:hover {
-background-color: green;
+.fetchButton {
+  margin-top: 3vh;
+  height: 8vh;
+  width: 12vw;
+  font-size: large;
+  font-weight: bold;
 }
+
+.submitButton:hover {
+background-color: rgb(20, 160, 20);
+}
+
+.fetchButton:hover {
+  background-color: rgb(13, 114, 182);
+  }
