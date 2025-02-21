@@ -20,10 +20,28 @@ export default function Home() {
     await addStudent(newStudent);
   }
 
+  async function handleupdateSubmit (event:any) {
+
+    event.preventDefault(); 
+      const  newStudent : DataItem = {
+        studentID : updatestudentID,
+        studentName : updatestudentName,
+        course : updatecourse,
+        presentDate : updatepresentDate
+  
+      }
+      await updateStudent(newStudent);
+    
+  }
+
 const [studentID, setstudentID] = useState('');
 const [studentName, setstudentName] = useState('');
 const [course, setcourse] = useState('');
 const [presentDate, setpresentDate] = useState('');
+const [updatestudentID, setupdatestudentID] = useState('');
+const [updatestudentName, setupdatestudentName] = useState('');
+const [updatecourse, setupdatecourse] = useState('');
+const [updatepresentDate, setupdatepresentDate] = useState('');
 const [data, setData] = useState<DataItem[]>([]);
 const [loading, setLoading] = useState<boolean>(true);
 
@@ -64,6 +82,35 @@ const addStudent = async (student:{studentID:string;studentName:string;course:st
   }
 };
 
+const updateStudent = async (student:{studentID:string;studentName:string;course:string;presentDate:string;}) => {
+      try {
+        const res = await fetch('/api/route', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(student),
+        });
+        console.log('Response status:', res.status);
+        console.log('Response status text:', res.statusText);
+        if (!res.ok) {
+          throw new Error('Failed to insert data');
+        }
+
+        const newStudent = await res.json();
+        console.log('Response data:', newStudent);
+
+        await fetchData();
+        setupdatestudentID('')
+        setupdatestudentName('')
+        setupdatecourse('')
+        setupdatepresentDate('')
+        // await fetchData();
+      } catch (error) {
+        console.error('Error adding student:', error);
+      }
+};
+
 
 const fetchData = async () => {
       try {
@@ -84,38 +131,77 @@ const fetchData = async () => {
 
   return (
     <div className={styles.page}>
-      <h1>Add New Student</h1>
-      <form onSubmit={handleSubmit} className={styles.page}>
-        <label>
-        <input type="text" 
-        name="studentID" 
-        placeholder="Student ID"
-        value={studentID} 
-        onChange={(event) =>(setstudentID(event.target.value))}></input>
-        </label>
-        <label>
-        <input type="text" 
-        name="studentName" 
-        placeholder="Full Name"
-        value={studentName} 
-        onChange={(event) =>(setstudentName(event.target.value))}></input>
-        </label>
-        <label>
-        <input type="text" 
-        name="course" 
-        placeholder="Couse Name"
-        value={course} 
-        onChange={(event) =>(setcourse(event.target.value))}></input>
-        </label>
-        <label>
-        <input type="text" 
-        name="presentDate" 
-        placeholder="Date (dd/mm/yyyy)"
-        value={presentDate} 
-        onChange={(event) =>(setpresentDate(event.target.value))}></input>
-        </label>
-        <button className={styles.submitButton} type="submit">Add Student</button>
-      </form>
+      <div className={styles.formdiv}>
+        <div>
+        <h1>Add New Student</h1>
+        <form onSubmit={handleSubmit} className={styles.addform}>
+          <label>
+          <input type="text" 
+          name="studentID" 
+          placeholder="Student ID"
+          value={studentID} 
+          onChange={(event) =>(setstudentID(event.target.value))}></input>
+          </label>
+          <label>
+          <input type="text" 
+          name="studentName" 
+          placeholder="Full Name"
+          value={studentName} 
+          onChange={(event) =>(setstudentName(event.target.value))}></input>
+          </label>
+          <label>
+          <input type="text" 
+          name="course" 
+          placeholder="Couse Name"
+          value={course} 
+          onChange={(event) =>(setcourse(event.target.value))}></input>
+          </label>
+          <label>
+          <input type="text" 
+          name="presentDate" 
+          placeholder="Date (dd/mm/yyyy)"
+          value={presentDate} 
+          onChange={(event) =>(setpresentDate(event.target.value))}></input>
+          </label>
+          <button className={styles.submitButton} type="submit">Add Student</button>
+        </form>
+        </div>
+
+        <div className={styles.updatestudentdiv}>
+        <h1>Update Student Info</h1>
+        <form onSubmit={handleupdateSubmit} className={styles.updateform}>
+          <label>
+          <input type="text" 
+          name="studentID" 
+          placeholder="Student ID"
+          value={updatestudentID} 
+          onChange={(event) =>(setupdatestudentID(event.target.value))}></input>
+          </label>
+          <label>
+          <input type="text" 
+          name="studentName" 
+          placeholder="Full Name"
+          value={updatestudentName} 
+          onChange={(event) =>(setupdatestudentName(event.target.value))}></input>
+          </label>
+          <label>
+          <input type="text" 
+          name="course" 
+          placeholder="Couse Name"
+          value={updatecourse} 
+          onChange={(event) =>(setupdatecourse(event.target.value))}></input>
+          </label>
+          <label>
+          <input type="text" 
+          name="presentDate" 
+          placeholder="Date (dd/mm/yyyy)"
+          value={updatepresentDate} 
+          onChange={(event) =>(setupdatepresentDate(event.target.value))}></input>
+          </label>
+          <button className={styles.submitButton} type="submit">Update Student</button>
+        </form>
+        </div>
+      </div>
       <DataDisplay data={data}setData={setData} loading={loading} setLoading={setLoading}></DataDisplay>
       <button className={styles.fetchButton} onClick={fetchData}>Fetch Data</button>
     </div>

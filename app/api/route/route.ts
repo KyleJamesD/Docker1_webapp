@@ -13,6 +13,66 @@ export async function GET(req: NextRequest) {
 }
 
 
+export async function PUT(req: NextRequest) {
+  try {
+    const { studentID, studentName, course, presentDate } = await req.json();
+
+    // Ensure the studentID is present. This is often used as a key to identify the record to update.
+    // if (!studentID) {
+    //   return NextResponse.json({ error: 'Missing studentID' }, { status: 400 });
+    // }
+
+    // Initialize an array to build the SET clause dynamically
+    const updates = [];
+    const values = [];
+    let valueIndex = 1;
+
+    if (studentName) {
+      updates.push(`"studentName" = $${valueIndex++}`);
+      values.push(studentName);
+    }
+
+    if (course) {
+      updates.push(`"course" = $${valueIndex++}`);
+      values.push(course);
+    }
+
+    if (presentDate) {
+      updates.push(`"presentDate" = $${valueIndex++}`);
+      values.push(presentDate);
+    }
+
+    // If there are no updates, return early
+    if (updates.length === 0) {
+      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+    }
+
+    // Add the studentID to the values array for the WHERE clause
+    values.push(studentID);
+
+    // Construct the SQL query
+    const updateQuery = `
+      UPDATE student_info
+      SET ${updates.join(', ')}
+      WHERE "studentID" = $${valueIndex}
+      RETURNING *;`;
+
+    // Execute the query
+    const result = await pool.query(updateQuery, values);
+
+    // Check if the student was found and updated
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(result.rows[0], { status: 200 }); // Respond with the updated record
+  } catch (error) {
+    console.error('Update error:', error);
+    return NextResponse.json({ error: 'Error updating data in database' }, { status: 500 });
+  }
+}
+
+
 export async function POST(req: NextRequest) {
     try {
       const { studentID, studentName, course, presentDate } = await req.json();
